@@ -1,92 +1,27 @@
 // Conexión codenotchBBDD
 const { appbooksBBDD } = require('../bbdd');
 
-// Controladores para las peticiones a los endpoints de profesores
-// // GET
-// const getProfesor = (req, res) => {
-//     let teacher_id = req.query.id;
-//     let params = [];
-//     let sql;
-//     if (!teacher_id) {
-//         sql = "SELECT * FROM teacher ORDER BY first_name, last_name";
-//     }else {
-//         params.push(teacher_id)
-//         sql = "SELECT * FROM teacher WHERE teacher_id = ?";
-//     };
-//     codenotchBBDD.query(sql, params, (error, result) => {
-//         if (!error) {
-//             let respuesta;
-//             if (result.length == 0){
-//                 respuesta = { ok: false, message: `Profesor con id ${teacher_id} no encontrado` };
-//             }else if (result.length == 1){
-//                 respuesta = { ok: true, message: `Profesor con id ${teacher_id}`, resultado: result[0]};                
-//             }else {
-//                 respuesta = { ok: true, message: `Listado profesores`, resultado: result};                
-//             }
-//             return res.status(200).json(respuesta);
-//         }else {
-//             console.log(error)
-//             return res.status(400).json(error.message);
-//         }
-//     })
-// };
-
+// Controlador endpoint /login
 // POST
 const appLogin = (req, res) => {
-    console.log('Controller login: appLogin works!!');
-    // let params = [req.body.first_name, req.body.last_name];
-    // let sql = 'INSERT INTO teacher (first_name, last_name) VALUES (?, ?)';
-    // codenotchBBDD.query(sql, params, (error, result) => {
-    //     if (!error) {
-    //         let respuesta = { ok: true, message: `Profesor con id ${result.insertId} agregado`, resultado: result.insertId};
-    //         return res.status(200).json(respuesta);
-    //     }else {
-    //         console.log(error)
-    //         return res.status(400).json(error.message);
-    //     }
-    // })
+    const { correo, password } = req.body;
+    let params = [correo, password];
+    let sql = 'SELECT * FROM usuario WHERE (correo = ?) && (password = ?)';
+    appbooksBBDD.query(sql, params, (error, result) => {
+        if (!error) {
+            let respuesta = { ok: false, message: `Usuario o contraseña incorrectos` };                
+            if (result.length > 0) {
+                const { id_usuario, nombre, apellidos, correo, url } = result[0]
+                let usuario = {  id_usuario, nombre, apellidos, correo, url };
+                respuesta = { ok: true, message: `Login correcto`, resultado: usuario };
+            }
+            return res.status(200).json(respuesta);
+        } else {
+            let respuesta = { ok: false, message: error.sqlMessage };
+            return res.status(400).json(respuesta);
+        }
+    })
 };
-
-// // PUT
-// const putProfesor = (req, res) => {
-//     let params = [req.body.first_name, req.body.last_name, req.body.id];
-//     let sql = "UPDATE teacher SET first_name = COALESCE(?, first_name)," +
-//               "last_name = COALESCE(?, last_name) WHERE teacher_id = ?";
-//     codenotchBBDD.query(sql, params, (error, result) => {
-//         if (!error) {
-//             let respuesta;
-//             if (result.affectedRows == 0){
-//                 respuesta = { ok: false, message: `Profesor con id ${req.body.id} no encontrado`};
-//             }else {
-//                 respuesta = { ok: true, message: `Profesor con id ${req.body.id} modificado`};
-//             }
-//             return res.status(200).json(respuesta);
-//         }else {
-//             console.log(error)
-//             return res.status(400).json(error.message);
-//         }
-//     })
-// };
-
-// // DELETE
-// const deleteProfesor = (req, res) => {
-//     let params = [req.body.id];
-//     let sql = "DELETE FROM teacher WHERE teacher_id = ?";
-//     codenotchBBDD.query(sql, params, (error, result) => {
-//         if (!error) {
-//             let respuesta;
-//             if (result.affectedRows == 0){
-//                 respuesta = { ok: false, message: `Profesor con id ${req.body.id} no encontrado`};
-//             }else {
-//                 respuesta = { ok: true, message: `Profesor con id ${req.body.id} eliminado`};
-//             }
-//             return res.status(200).json(respuesta);            
-//         }else {
-//             console.log(error)
-//             return res.status(400).json(error.message);
-//         }
-//     })
-// };
 
 // Exportar controladores
 module.exports = {

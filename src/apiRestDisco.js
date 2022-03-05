@@ -8,6 +8,7 @@ require('./bbdd');
 // ************************************************************************
 app.use('/registro', require('./routes/registro'));
 app.use('/login', require('./routes/login'));
+app.use('/libros', require('./routes/libros'));
 // ************************************************************************
 
 // Respuesta a cualquier petición en '/'
