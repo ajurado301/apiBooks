@@ -21,8 +21,7 @@ const postUsuario = (req, res) => {
 // PUT
 const putUsuario = (req, res) => {
     const { nombre, apellidos, correo, url, password, id_usuario } = req.body;
-    let pass = (password == '') ? null : password;
-    let params = [nombre, apellidos, correo, url, pass, id_usuario];
+    let params = [nombre, apellidos, correo, url, password, id_usuario];
     let sql = "UPDATE usuario SET nombre = COALESCE(?, nombre), apellidos = COALESCE(?, apellidos)," +
               "correo = COALESCE(?, correo), url = COALESCE(?, url)," +
               "password = COALESCE(?, password) WHERE id_usuario = ?";
