@@ -38,7 +38,7 @@ const postLibro = (req, res) => {
     let sql = 'INSERT INTO libro (titulo, tipo, autor, precio, foto) VALUES (?, ?, ?, ?, ?)';
     appbooksBBDD.query(sql, params, (error, result) => {
         if (!error) {
-            let respuesta = { ok: true, message: `Registrado libro con id ${result.insertId}`, resultado: result.insertId };
+            let respuesta = { ok: true, message: `Registrado libro con id ${result.insertId}`, resultado: { id_libro: result.insertId }};
             return res.status(200).json(respuesta);
         } else {
             let respuesta = { ok: false, message: error.sqlMessage };
