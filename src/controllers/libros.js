@@ -4,22 +4,22 @@ const { appbooksBBDD } = require('../bbdd');
 // Controladores endpoint /libros
 // GET
 const getLibro = (req, res) => {
-    let id = req.query.id;
-    let params = [];
+    const { id_usuario, id_libro } = req.query;
+    let params = [id_usuario];
     let sql;
-    if (!id) {
-        sql = "SELECT * FROM libro ORDER BY titulo";
+    if (!id_libro) {
+        sql = "SELECT * FROM libro WHERE id_usuario = ? ORDER BY titulo";
     }else {
-        params.push(id)
-        sql = "SELECT * FROM libro WHERE id_libro = ?";
+        params.push(id_libro)
+        sql = "SELECT * FROM libro WHERE id_usuario = ? AND id_libro = ?";
     };
     appbooksBBDD.query(sql, params, (error, result) => {
         if (!error) {
             let respuesta;
             if (result.length == 0){
-                respuesta = { ok: false, message: `Libro con id ${id} no encontrado` };
-            }else if (result.length == 1){
-                respuesta = { ok: true, message: `Libro con id ${id}`, resultado: result};                
+                respuesta = { ok: false, message: `No se encontraron libros` };
+            }else if (id_libro){
+                respuesta = { ok: true, message: `Libro con id ${id_libro}`, resultado: result};                
             }else {
                 respuesta = { ok: true, message: `Listado libros`, resultado: result};                
             }
@@ -33,9 +33,9 @@ const getLibro = (req, res) => {
 
 // POST
 const postLibro = (req, res) => {
-    const { titulo, tipo, autor, precio, foto } = req.body;
-    let params = [titulo, tipo, autor, precio, foto];
-    let sql = 'INSERT INTO libro (titulo, tipo, autor, precio, foto) VALUES (?, ?, ?, ?, ?)';
+    const { titulo, tipo, autor, precio, foto, id_usuario } = req.body;
+    let params = [titulo, tipo, autor, precio, foto, id_usuario];
+    let sql = 'INSERT INTO libro (titulo, tipo, autor, precio, foto, id_usuario) VALUES (?, ?, ?, ?, ?, ?)';
     appbooksBBDD.query(sql, params, (error, result) => {
         if (!error) {
             let respuesta = { ok: true, message: `Registrado libro con id ${result.insertId}`, resultado: { id_libro: result.insertId }};
